@@ -1,5 +1,6 @@
 const socketIO = require("socket.io");
 const lineStatusService = require("./services/lineStatusService");
+const LineStatus = require("./models/LineStatus");
 
 let io;
 let changeStream;
@@ -19,6 +20,15 @@ const setupSocket = async (server) => {
       socket.on("subscribe", (lineName) => {
         console.log(`Client subscribed to ${lineName} updates`);
         socket.join(lineName);
+
+        lineStatusService
+          .getLineStatus(lineName)
+          .then((status) => {
+            if (status) {
+              socket.emit("lineUpdate", status);
+            }
+          })
+          .catch((err) => console.error("Error fetching initial status:", err));
       });
 
       socket.on("unsubscribe", (lineName) => {
@@ -32,20 +42,82 @@ const setupSocket = async (server) => {
     });
 
     try {
-      changeStream = lineStatusService.watchLineStatusChanges((change) => {
-        if (
-          change.operationType === "update" ||
-          change.operationType === "insert"
-        ) {
-          const lineName = change.fullDocument?.lineName;
-          if (lineName) {
-            io.to(lineName).emit("lineUpdate", change.fullDocument);
+      console.log("Setting up filtered change stream...");
+      changeStream = lineStatusService.watchLineStatusChanges(
+        async (change) => {
+          console.log(
+            "Change received in socket handler:",
+            change.operationType
+          );
+
+          if (
+            change.operationType === "update" ||
+            change.operationType === "insert"
+          ) {
+            if (change.operationType === "update") {
+              const updatedFields =
+                change.updateDescription?.updatedFields || {};
+              const fieldKeys = Object.keys(updatedFields);
+
+              const hasRelevantChanges = fieldKeys.some(
+                (key) =>
+                  key.includes("disruptions.status") ||
+                  key.includes("disruptions.isEntireRouteAffected") ||
+                  key.includes("disruptions.affectedStations")
+              );
+
+              if (!hasRelevantChanges) {
+                console.log(
+                  "Change detected but not in targeted fields, ignoring"
+                );
+                return;
+              }
+            }
+
+            let documentToSend = change.fullDocument;
+
+            if (
+              !documentToSend &&
+              change.documentKey &&
+              change.documentKey._id
+            ) {
+              try {
+                console.log(
+                  "Fetching document for ID:",
+                  change.documentKey._id
+                );
+                documentToSend = await LineStatus.findById(
+                  change.documentKey._id
+                );
+              } catch (err) {
+                console.error("Error fetching document:", err);
+                return;
+              }
+            }
+
+            if (documentToSend && documentToSend.lineName) {
+              const lineName = documentToSend.lineName;
+              console.log(`Broadcasting update for ${lineName} line`);
+
+              const roomSize =
+                io.sockets.adapter.rooms.get(lineName)?.size || 0;
+              console.log(`Subscribers in ${lineName} room: ${roomSize}`);
+
+              io.to(lineName).emit("lineUpdate", documentToSend);
+            } else {
+              console.log(
+                "Missing document or lineName, cannot broadcast update"
+              );
+            }
           }
         }
-      });
-      console.log("WebSocket server started successfully with change streams");
+      );
+      console.log(
+        "WebSocket server started successfully with filtered change streams"
+      );
     } catch (error) {
       console.log("WebSocket server started, but change streams not available");
+      console.error(error);
     }
 
     return io;

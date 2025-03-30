@@ -24,10 +24,76 @@ exports.getAllLineStatuses = async () => {
 
 exports.watchLineStatusChanges = (callback) => {
   try {
-    const changeStream = LineStatus.watch();
+    const pipeline = [
+      {
+        $match: {
+          $or: [
+            {
+              "updateDescription.updatedFields.disruptions.status": {
+                $exists: true,
+              },
+            },
+            {
+              "updateDescription.updatedFields.disruptions.isEntireRouteAffected":
+                { $exists: true },
+            },
+            {
+              "updateDescription.updatedFields.disruptions.affectedStations": {
+                $exists: true,
+              },
+            },
+            { operationType: "insert" },
+          ],
+        },
+      },
+    ];
+
+    const options = {
+      fullDocument: "updateLookup",
+    };
+
+    const changeStream = LineStatus.watch(pipeline, options);
 
     changeStream.on("change", (change) => {
-      callback(change);
+      console.log("Change detected matching criteria:", change.operationType);
+      console.log("Full document included:", !!change.fullDocument);
+
+      if (change.operationType === "update") {
+        console.log(
+          "Updated fields:",
+          Object.keys(change.updateDescription.updatedFields).join(", ")
+        );
+      }
+
+      if (
+        !change.fullDocument &&
+        change.documentKey &&
+        change.documentKey._id
+      ) {
+        console.log("fullDocument missing, fetching document by ID");
+        LineStatus.findById(change.documentKey._id)
+          .then((doc) => {
+            if (doc) {
+              const modifiedChange = {
+                ...change,
+                fullDocument: doc,
+              };
+              callback(modifiedChange);
+            } else {
+              console.error(
+                "Document not found for ID:",
+                change.documentKey._id
+              );
+              callback(change);
+            }
+          })
+          .catch((err) => {
+            console.error("Error fetching full document:", err);
+            callback(change);
+          });
+      } else {
+        callback(change);
+      }
     });
 
     changeStream.on("error", (error) => {
