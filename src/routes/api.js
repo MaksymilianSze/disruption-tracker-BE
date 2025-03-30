@@ -8,4 +8,6 @@ router.get("/status", (req, res) => {
 
 router.get("/disruptions", disruptionController.getDisruptions);
 
+router.get("/disruptions/cached", disruptionController.getCachedDisruptions);
+
 module.exports = router;
