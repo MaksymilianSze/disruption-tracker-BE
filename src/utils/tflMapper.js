@@ -6,7 +6,7 @@ exports.mapLineStatusToDisruptions = (lineStatusData) => {
   }
 
   const result = {
-    lineName: disruptionData.name,
+    lineName: disruptionData.name.replaceAll(" ", ""),
     disruptions: [],
   };
 
@@ -24,7 +24,16 @@ exports.mapLineStatusToDisruptions = (lineStatusData) => {
       disruptionEnd: disruption.validityPeriods[0].toDate,
       isEntireRouteAffected: disruption.disruption.affectedStops.length === 0,
       affectedStations: disruption.disruption.affectedStops.map((route) =>
-        route.commonName.replace(" Underground Station", "")
+        route.commonName
+          .replace(" Underground Station", "")
+          .replace("-Underground", "")
+          .replace(" (Circle Line)", "")
+          .replace(" (H&C Line)", "")
+          .replace(" (DistrictLine)", "")
+          .replace("King's Cross St. Pancras", "King's Cross St. Pan")
+          .replace("Heathrow Terminals 2 & 3", "Heathrow T2 & T3")
+          .replace("Heathrow Terminals 4", "Heathrow T4")
+          .replace("Heathrow Terminals 5", "Heathrow T5")
       ),
     });
   });
