@@ -61,7 +61,7 @@ exports.watchLineStatusChanges = (callback) => {
       if (change.operationType === "update") {
         console.log(
           "Updated fields:",
-          Object.keys(change.updateDescription.updatedFields).join(", ")
+          Object.keys(change.updateDescription.updatedFields)
         );
       }
 

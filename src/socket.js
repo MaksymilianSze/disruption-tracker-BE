@@ -66,6 +66,7 @@ const setupSocket = async (server) => {
                   key.includes("disruptions.affectedStations")
               );
 
+              // Kinf of redundant if the change stream is setup correctly with the right pipeline but just in case
               if (!hasRelevantChanges) {
                 console.log(
                   "Change detected but not in targeted fields, ignoring"
