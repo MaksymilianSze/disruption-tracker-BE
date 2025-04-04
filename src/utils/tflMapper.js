@@ -32,8 +32,8 @@ exports.mapLineStatusToDisruptions = (lineStatusData) => {
           .replace(" (DistrictLine)", "")
           .replace("King's Cross St. Pancras", "King's Cross St. Pan")
           .replace("Heathrow Terminals 2 & 3", "Heathrow T2 & T3")
-          .replace("Heathrow Terminals 4", "Heathrow T4")
-          .replace("Heathrow Terminals 5", "Heathrow T5")
+          .replace("Heathrow Terminal 4", "Heathrow T4")
+          .replace("Heathrow Terminal 5", "Heathrow T5")
       ),
     });
   });
