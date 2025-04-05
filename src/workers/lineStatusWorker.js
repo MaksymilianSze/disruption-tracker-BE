@@ -10,23 +10,63 @@ class LineStatusWorker {
     this.job = null;
   }
 
+  hasDisruptionsChanged(existingData, newData) {
+    if (!existingData) return true;
+
+    if (!existingData.disruptions?.length && !newData.disruptions?.length) {
+      return false;
+    }
+
+    if (
+      (existingData.disruptions?.length || 0) !==
+      (newData.disruptions?.length || 0)
+    ) {
+      return true;
+    }
+
+    return newData.disruptions.some((newDisruption, index) => {
+      const existingDisruption = existingData.disruptions[index];
+
+      return (
+        newDisruption.status !== existingDisruption.status ||
+        newDisruption.isEntireRouteAffected !==
+          existingDisruption.isEntireRouteAffected ||
+        // JSON stringify because an array is never equal to another instance of an array even if they have the same values
+        JSON.stringify(newDisruption.affectedStations.sort()) !==
+          JSON.stringify(existingDisruption.affectedStations.sort())
+      );
+    });
+  }
+
   async pollAndUpdate() {
     try {
       console.log(`Polling TFL API for ${this.lineName} line status...`);
 
       const lineStatusData = await tflService.getLineStatus(this.lineName);
-
       const mappedData = tflMapper.mapLineStatusToDisruptions(lineStatusData);
-
       mappedData.updatedAt = new Date();
 
-      await LineStatus.findOneAndUpdate(
-        { lineName: mappedData.lineName },
-        mappedData,
-        { upsert: true, new: true }
-      );
+      const existingData = await LineStatus.findOne({
+        lineName: this.lineName,
+      });
 
-      console.log(`Updated ${this.lineName} line status successfully`);
+      if (this.hasDisruptionsChanged(existingData, mappedData)) {
+        console.log(
+          `Changes detected for ${this.lineName} line, updating database...`
+        );
+
+        await LineStatus.findOneAndUpdate(
+          { lineName: mappedData.lineName },
+          mappedData,
+          { upsert: true, new: true }
+        );
+
+        console.log(`Updated ${this.lineName} line status successfully`);
+      } else {
+        console.log(
+          `No changes detected for ${this.lineName} line, skipping update`
+        );
+      }
     } catch (error) {
       console.error(`Error updating ${this.lineName} line status:`, error);
     }

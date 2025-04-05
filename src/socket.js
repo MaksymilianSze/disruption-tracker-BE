@@ -59,11 +59,8 @@ const setupSocket = async (server) => {
                 change.updateDescription?.updatedFields || {};
               const fieldKeys = Object.keys(updatedFields);
 
-              const hasRelevantChanges = fieldKeys.some(
-                (key) =>
-                  key.includes("disruptions.status") ||
-                  key.includes("disruptions.isEntireRouteAffected") ||
-                  key.includes("disruptions.affectedStations")
+              const hasRelevantChanges = fieldKeys.some((key) =>
+                key.includes("disruptions")
               );
 
               // Kinf of redundant if the change stream is setup correctly with the right pipeline but just in case

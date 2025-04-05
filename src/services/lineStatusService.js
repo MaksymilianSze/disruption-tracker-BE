@@ -28,21 +28,11 @@ exports.watchLineStatusChanges = (callback) => {
       {
         $match: {
           $or: [
-            {
-              "updateDescription.updatedFields.disruptions.status": {
-                $exists: true,
-              },
-            },
-            {
-              "updateDescription.updatedFields.disruptions.isEntireRouteAffected":
-                { $exists: true },
-            },
-            {
-              "updateDescription.updatedFields.disruptions.affectedStations": {
-                $exists: true,
-              },
-            },
             { operationType: "insert" },
+
+            {
+              operationType: "update",
+            },
           ],
         },
       },
@@ -71,6 +61,7 @@ exports.watchLineStatusChanges = (callback) => {
         change.documentKey._id
       ) {
         console.log("fullDocument missing, fetching document by ID");
+
         LineStatus.findById(change.documentKey._id)
           .then((doc) => {
             if (doc) {
@@ -102,8 +93,8 @@ exports.watchLineStatusChanges = (callback) => {
 
     return changeStream;
   } catch (error) {
-    setupPolling(callback);
-    throw error;
+    console.error("Failed to set up change stream:", error);
+    return setupPolling(callback);
   }
 };
 
