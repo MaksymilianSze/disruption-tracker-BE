@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const http = require("http");
+const helmet = require("helmet");
 
 dotenv.config();
 
@@ -11,6 +12,7 @@ const workerManager = require("./workers/workerManager");
 const { setupSocket, cleanup } = require("./socket");
 
 const app = express();
+app.use(helmet());
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
@@ -23,7 +25,7 @@ app.get("/", (req, res) => {
 app.use("/api", apiRoutes);
 
 app.use((err, req, res, next) => {
-  console.error(err);
+  console.error("Error:", err.message);
   res.status(500).json({ error: "Internal Server Error" });
 });
 

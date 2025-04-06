@@ -1,18 +1,15 @@
-exports.mapLineStatusToDisruptions = (lineStatusData) => {
+exports.mapLineStatusToDisruptions = (lineStatusData, lineName) => {
   const disruptionData = lineStatusData[0];
 
   if (!disruptionData) {
     return {
-      lineName: "unknown",
+      lineName: lineName || "unknown",
       disruptions: [],
     };
   }
 
   const result = {
-    lineName: disruptionData?.name
-      .replaceAll(" ", "")
-      .replace("&", "-")
-      .toLowerCase(),
+    lineName,
     disruptions: [],
   };
 
@@ -30,20 +27,26 @@ exports.mapLineStatusToDisruptions = (lineStatusData) => {
       disruptionEnd: disruption.validityPeriods[0]?.toDate,
       isEntireRouteAffected: !disruption.disruption?.affectedStops?.length,
       affectedStations: (disruption.disruption?.affectedStops || []).map(
-        (route) =>
-          route.commonName
-            .replace(" Underground Station", "")
-            .replace("-Underground", "")
-            .replace(" (Circle Line)", "")
-            .replace(" (H&C Line)", "")
-            .replace(" (DistrictLine)", "")
-            .replace("King's Cross St. Pancras", "King's Cross St. Pan")
-            .replace("Heathrow Terminals 2 & 3", "Heathrow T2 & T3")
-            .replace("Heathrow Terminal 4", "Heathrow T4")
-            .replace("Heathrow Terminal 5", "Heathrow T5")
+        (route) => formatStationName(route.commonName)
       ),
     });
   });
 
   return result;
+};
+
+const formatStationName = (stationName) => {
+  return stationName
+    .replace(" Underground Station", "")
+    .replace("-Underground", "")
+    .replace(" Rail Station", "")
+    .replace(" (Circle Line)", "")
+    .replace(" (H&C Line)", "")
+    .replace(" (DistrictLine)", "")
+    .replace("King's Cross St. Pancras", "King's Cross St. Pan")
+    .replace("Heathrow Terminals 2 & 3", "Heathrow T2 & T3")
+    .replace("Heathrow Terminal 4", "Heathrow T4")
+    .replace("Heathrow Terminal 5", "Heathrow T5")
+    .replace("High Street Kensington", "High St Ken")
+    .replace("Kensington Olympia", "Ken Olympia");
 };

@@ -43,7 +43,10 @@ class LineStatusWorker {
       console.log(`Polling TFL API for ${this.lineName} line status...`);
 
       const lineStatusData = await tflService.getLineStatus(this.lineName);
-      const mappedData = tflMapper.mapLineStatusToDisruptions(lineStatusData);
+      const mappedData = tflMapper.mapLineStatusToDisruptions(
+        lineStatusData,
+        this.lineName
+      );
       mappedData.updatedAt = new Date();
 
       const existingData = await LineStatus.findOne({

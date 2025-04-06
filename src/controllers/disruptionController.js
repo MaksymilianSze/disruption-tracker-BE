@@ -1,18 +1,16 @@
 const tflService = require("../services/tflService");
 const tflMapper = require("../utils/tflMapper");
 const lineStatusService = require("../services/lineStatusService");
+
 exports.getDisruptions = async (req, res, next) => {
   try {
-    const { lineName } = req.query;
-
-    if (!lineName) {
-      return res
-        .status(400)
-        .json({ error: `Query param 'lineName' is required` });
-    }
+    const { lineName } = req.validatedQuery;
 
     const lineStatusData = await tflService.getLineStatus(lineName);
-    const mappedData = tflMapper.mapLineStatusToDisruptions(lineStatusData);
+    const mappedData = tflMapper.mapLineStatusToDisruptions(
+      lineStatusData,
+      lineName
+    );
 
     res.json(mappedData);
   } catch (error) {
@@ -22,13 +20,7 @@ exports.getDisruptions = async (req, res, next) => {
 
 exports.getCachedDisruptions = async (req, res, next) => {
   try {
-    const { lineName } = req.query;
-
-    if (!lineName) {
-      return res
-        .status(400)
-        .json({ error: `Query param 'lineName' is required` });
-    }
+    const { lineName } = req.validatedQuery;
 
     const cachedDisruptions = await lineStatusService.getLineStatus(lineName);
     res.json(cachedDisruptions);
