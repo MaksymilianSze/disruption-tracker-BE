@@ -3,6 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const http = require("http");
 const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 
 dotenv.config();
 
@@ -13,6 +14,13 @@ const { setupSocket, cleanup } = require("./socket");
 
 const app = express();
 app.use(helmet());
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+  })
+);
+
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
