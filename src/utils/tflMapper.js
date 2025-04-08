@@ -51,6 +51,7 @@ const formatStationName = (stationName) => {
     .replace(" (Victoria)", "")
     .replace(" (Waterloo & City)", "")
     .replace("King's Cross St. Pancras", "King's Cross St. Pan")
+    .replace("Battersea Power Station", "Battersea Pwr Stn")
     .replace("Heathrow Terminals 2 & 3", "Heathrow T2 & T3")
     .replace("Heathrow Terminal 4", "Heathrow T4")
     .replace("Heathrow Terminal 5", "Heathrow T5")
