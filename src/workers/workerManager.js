@@ -18,6 +18,12 @@ class WorkerManager {
       "dlr",
       "tram",
       "elizabeth",
+      "lioness",
+      "liberty",
+      "mildmay",
+      "suffragette",
+      "weaver",
+      "windrush",
     ];
   }
 

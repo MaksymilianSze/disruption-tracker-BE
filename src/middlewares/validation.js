@@ -17,7 +17,13 @@ const lineNameSchema = Joi.object({
       "waterloo-city",
       "dlr",
       "tram",
-      "elizabeth"
+      "elizabeth",
+      "lioness",
+      "liberty",
+      "mildmay",
+      "suffragette",
+      "weaver",
+      "windrush"
     )
     .insensitive()
     .lowercase(),
