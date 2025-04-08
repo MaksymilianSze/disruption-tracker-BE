@@ -15,6 +15,9 @@ class WorkerManager {
       "piccadilly",
       "victoria",
       "waterloo-city",
+      "dlr",
+      "tram",
+      "elizabeth",
     ];
   }
 

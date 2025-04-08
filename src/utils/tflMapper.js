@@ -55,5 +55,6 @@ const formatStationName = (stationName) => {
     .replace("Heathrow Terminal 4", "Heathrow T4")
     .replace("Heathrow Terminal 5", "Heathrow T5")
     .replace("High Street Kensington", "High St Ken")
-    .replace("Kensington Olympia", "Ken Olympia");
+    .replace("Kensington Olympia", "Ken Olympia")
+    .replace(" Tram Stop", "");
 };

@@ -1,9 +1,5 @@
 const mongoose = require("mongoose");
 
-const affectedStationSchema = new mongoose.Schema({
-  name: String,
-});
-
 const disruptionSchema = new mongoose.Schema({
   status: String,
   description: String,
