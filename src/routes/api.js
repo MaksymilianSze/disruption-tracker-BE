@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const disruptionController = require("../controllers/disruptionController");
 const { validateLineNameQuery } = require("../middlewares/validation");
-
+const socialController = require("../controllers/socialController");
 router.get("/status", (req, res) => {
   res.json({ status: "online", message: "API is working properly" });
 });
@@ -18,5 +18,7 @@ router.get(
   validateLineNameQuery,
   disruptionController.getCachedDisruptions
 );
+
+router.get("/social/posts", socialController.getDisruptionPosts);
 
 module.exports = router;
