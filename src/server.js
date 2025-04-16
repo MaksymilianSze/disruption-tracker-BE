@@ -12,6 +12,9 @@ const connectDB = require("./config/db");
 const workerManager = require("./workers/workerManager");
 const { setupSocket, cleanup } = require("./socket");
 
+// Check if we're running in API-only mode
+const isApiOnlyMode = process.env.NODE_ENV === "api-only";
+
 const app = express();
 app.use(helmet());
 app.use(
@@ -45,22 +48,36 @@ const start = async () => {
 
     server.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
+      if (isApiOnlyMode) {
+        console.log(
+          "Running in API-only mode (WebSocket and workers disabled)"
+        );
+      }
     });
 
-    try {
-      await setupSocket(server);
-    } catch (socketError) {
-      console.log(
-        "WebSocket setup failed, continuing without real-time updates"
-      );
-    }
+    if (!isApiOnlyMode) {
+      try {
+        await setupSocket(server);
+        console.log("WebSocket server started successfully");
+      } catch (socketError) {
+        console.log(
+          "WebSocket setup failed, continuing without real-time updates"
+        );
+        console.error(socketError);
+      }
 
-    workerManager.startAll();
+      workerManager.startAll();
+      console.log("Worker manager started successfully");
+    }
 
     const shutdown = () => {
       console.log("Shutting down gracefully...");
-      cleanup();
-      workerManager.stopAll();
+
+      if (!isApiOnlyMode) {
+        cleanup();
+        workerManager.stopAll();
+      }
+
       server.close(() => {
         console.log("Server closed");
         process.exit(0);
