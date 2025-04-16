@@ -47,15 +47,15 @@ const start = async () => {
       console.log(`Server running on port ${PORT}`);
     });
 
-    // try {
-    //   await setupSocket(server);
-    // } catch (socketError) {
-    //   console.log(
-    //     "WebSocket setup failed, continuing without real-time updates"
-    //   );
-    // }
+    try {
+      await setupSocket(server);
+    } catch (socketError) {
+      console.log(
+        "WebSocket setup failed, continuing without real-time updates"
+      );
+    }
 
-    // workerManager.startAll();
+    workerManager.startAll();
 
     const shutdown = () => {
       console.log("Shutting down gracefully...");
