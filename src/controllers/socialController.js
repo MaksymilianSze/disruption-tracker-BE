@@ -10,13 +10,23 @@ const DEFAULT_SUBREDDITS = [
   "TransportForLondon",
 ];
 
+const DEFAULT_TIMES = ["all", "hour", "day", "week", "month", "year"];
+
 exports.getDisruptionPosts = async (req, res, next) => {
   try {
-    const { queryTerms, subreddits } = req.query;
+    const { queryTerms, subreddits, time } = req.query;
 
     if (!queryTerms || !subreddits) {
       return res.status(400).json({
         error: "Query term and subreddits are required",
+      });
+    }
+
+    if (!time || !DEFAULT_TIMES.includes(time)) {
+      return res.status(400).json({
+        error: `Invalid time: ${time}. Must be one of: ${DEFAULT_TIMES.join(
+          ", "
+        )}`,
       });
     }
 
@@ -38,6 +48,7 @@ exports.getDisruptionPosts = async (req, res, next) => {
     const posts = await getDisruptionPosts({
       queryTerms: queryTermsArray,
       subreddits: subredditArray,
+      time: time,
     });
 
     const mappedPosts = mapDisruptionRedditPosts(posts, subredditArray);

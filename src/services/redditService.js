@@ -9,7 +9,7 @@ const redditClient = new snoowrap({
 });
 
 exports.getDisruptionPosts = async (params) => {
-  const { queryTerms, subreddits } = params;
+  const { queryTerms, subreddits, time = "all" } = params;
 
   const searchPromises = subreddits.map((subreddit) => {
     for (const queryTerm of queryTerms) {
@@ -17,6 +17,7 @@ exports.getDisruptionPosts = async (params) => {
         query: queryTerm,
         subreddit: subreddit,
         sort: "new",
+        time: time,
         limit: 10,
       });
     }
@@ -25,8 +26,6 @@ exports.getDisruptionPosts = async (params) => {
   const posts = await Promise.all(searchPromises);
 
   const flattenedPosts = posts.flat();
-
-  console.log(flattenedPosts);
 
   return flattenedPosts;
 };
