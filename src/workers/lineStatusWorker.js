@@ -28,6 +28,7 @@ class LineStatusWorker {
       const existingDisruption = existingData.disruptions[index];
 
       return (
+        newDisruption.description !== existingDisruption.description ||
         newDisruption.status !== existingDisruption.status ||
         newDisruption.isEntireRouteAffected !==
           existingDisruption.isEntireRouteAffected ||
