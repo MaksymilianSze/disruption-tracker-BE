@@ -76,10 +76,7 @@ const formatStationName = (stationName) => {
   for (const [pattern, replacement] of Object.entries(
     mapCommonNameShortenings
   )) {
-    formattedName = formattedName.replace(
-      new RegExp(pattern, "g"),
-      replacement
-    );
+    formattedName = formattedName.replace(pattern, replacement);
   }
 
   formattedName = formattedName.replace(/\s+/g, " ").trim();
