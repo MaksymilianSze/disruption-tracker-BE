@@ -59,7 +59,7 @@ const mapCommonNameShortenings = {
 };
 
 const mapSpecialCaseShortenings = {
-  "Queens Road Peckham Rail Station": "Qns Rd Peckham",
+  "Queens Rd Peckham": "Qns Rd Peckham",
   "Kings Cross St. Pancras": "Kings Cross St. Pan",
   "Battersea Power Station": "Battersea Pwr Stn",
   "Heathrow Terminals 2 & 3": "Heathrow T2 & T3",
@@ -72,14 +72,6 @@ const mapSpecialCaseShortenings = {
 const formatStationName = (stationName) => {
   if (!stationName) return "";
 
-  for (const [original, shortened] of Object.entries(
-    mapSpecialCaseShortenings
-  )) {
-    if (stationName === original) {
-      return shortened;
-    }
-  }
-
   let formattedName = stationName;
   for (const [pattern, replacement] of Object.entries(
     mapCommonNameShortenings
@@ -89,7 +81,16 @@ const formatStationName = (stationName) => {
       replacement
     );
   }
+
   formattedName = formattedName.replace(/\s+/g, " ").trim();
+
+  for (const [original, shortened] of Object.entries(
+    mapSpecialCaseShortenings
+  )) {
+    if (formattedName === original) {
+      return shortened;
+    }
+  }
 
   return formattedName;
 };
