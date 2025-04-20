@@ -35,29 +35,61 @@ exports.mapLineStatusToDisruptions = (lineStatusData, lineName) => {
   return result;
 };
 
+const mapCommonNameShortenings = {
+  "High Street": "High St",
+  " Road": " Rd",
+  " Underground Station": "",
+  "-Underground": "",
+  " Rail Station": "",
+  " (Circle Line)": "",
+  " (H&C Line)": "",
+  " (DistrictLine)": "",
+  " (Bakerloo)": "",
+  " (Metropolitan)": "",
+  " (Central)": "",
+  " (Northern)": "",
+  " (Piccadilly)": "",
+  " (Victoria)": "",
+  " (Waterloo & City)": "",
+  " Tram Stop": "",
+  " (London)": "",
+  "London ": "",
+  "'": "",
+  "s's": "s",
+};
+
+const mapSpecialCaseShortenings = {
+  "Queens Road Peckham Rail Station": "Qns Rd Peckham",
+  "Kings Cross St. Pancras": "Kings Cross St. Pan",
+  "Battersea Power Station": "Battersea Pwr Stn",
+  "Heathrow Terminals 2 & 3": "Heathrow T2 & T3",
+  "Heathrow Terminal 4": "Heathrow T4",
+  "Heathrow Terminal 5": "Heathrow T5",
+  "High Street Kensington": "High St Ken",
+  "Kensington (Olympia)": "Ken Olympia",
+};
+
 const formatStationName = (stationName) => {
-  return stationName
-    .replace(" Underground Station", "")
-    .replace("-Underground", "")
-    .replace(" Rail Station", "")
-    .replace(" (Circle Line)", "")
-    .replace(" (H&C Line)", "")
-    .replace(" (DistrictLine)", "")
-    .replace(" (Bakerloo)", "")
-    .replace(" (Metropolitan)", "")
-    .replace(" (Central)", "")
-    .replace(" (Northern)", "")
-    .replace(" (Piccadilly)", "")
-    .replace(" (Victoria)", "")
-    .replace(" (Waterloo & City)", "")
-    .replace("Kings Cross St. Pancras", "Kings Cross St. Pan")
-    .replace("Battersea Power Station", "Battersea Pwr Stn")
-    .replace("Heathrow Terminals 2 & 3", "Heathrow T2 & T3")
-    .replace("Heathrow Terminal 4", "Heathrow T4")
-    .replace("Heathrow Terminal 5", "Heathrow T5")
-    .replace("High Street Kensington", "High St Ken")
-    .replace("Kensington (Olympia)", "Ken Olympia")
-    .replace(" Tram Stop", "")
-    .replace(" (London)", "")
-    .replace("London ", "");
+  if (!stationName) return "";
+
+  for (const [original, shortened] of Object.entries(
+    mapSpecialCaseShortenings
+  )) {
+    if (stationName === original) {
+      return shortened;
+    }
+  }
+
+  let formattedName = stationName;
+  for (const [pattern, replacement] of Object.entries(
+    mapCommonNameShortenings
+  )) {
+    formattedName = formattedName.replace(
+      new RegExp(pattern, "g"),
+      replacement
+    );
+  }
+  formattedName = formattedName.replace(/\s+/g, " ").trim();
+
+  return formattedName;
 };
