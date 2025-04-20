@@ -58,5 +58,6 @@ const formatStationName = (stationName) => {
     .replace("High Street Kensington", "High St Ken")
     .replace("Kensington (Olympia)", "Ken Olympia")
     .replace(" Tram Stop", "")
-    .replace(" (London)", "");
+    .replace(" (London)", "")
+    .replace("London ", "");
 };

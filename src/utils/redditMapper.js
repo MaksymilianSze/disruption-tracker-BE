@@ -1,6 +1,7 @@
-exports.mapDisruptionRedditPosts = (posts, subreddits) => {
+const { allowedVariationsMapper } = require("./allowedVariationsMapper");
+
+exports.mapDisruptionRedditPosts = (posts, lineName) => {
   const result = {
-    subreddits,
     posts: [],
   };
 
@@ -27,12 +28,29 @@ exports.mapDisruptionRedditPosts = (posts, subreddits) => {
       author: post.author?.name || "unknown",
       subreddit: post.subreddit?.display_name || post.subreddit,
       permalink: `https://reddit.com${post.permalink}`,
+      flair: post.link_flair_text,
     });
   });
 
   result.posts.sort((a, b) => {
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
+
+  if (lineName) {
+    const allowedVariations = allowedVariationsMapper(lineName);
+    if (allowedVariations) {
+      result.posts = result.posts.filter((post) =>
+        allowedVariations.some(
+          (variation) =>
+            post.title?.toLowerCase()?.includes(variation.toLowerCase()) ||
+            post.body?.toLowerCase()?.includes(variation.toLowerCase()) ||
+            post.flair?.toLowerCase()?.includes(variation.toLowerCase())
+        )
+      );
+    } else {
+      result.posts = [];
+    }
+  }
 
   return result;
 };

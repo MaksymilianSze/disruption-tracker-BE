@@ -19,6 +19,10 @@ router.get(
   disruptionController.getCachedDisruptions
 );
 
-router.get("/social/posts", socialController.getDisruptionPosts);
+router.get(
+  "/social/posts",
+  validateLineNameQuery,
+  socialController.getDisruptionPosts
+);
 
 module.exports = router;

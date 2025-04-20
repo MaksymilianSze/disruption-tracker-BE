@@ -27,7 +27,7 @@ const lineNameSchema = Joi.object({
     )
     .insensitive()
     .lowercase(),
-}).unknown(false);
+}).unknown(true);
 
 const validateQuery = (schema) => {
   return (req, res, next) => {

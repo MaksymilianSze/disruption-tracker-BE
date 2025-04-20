@@ -1,24 +1,16 @@
 const { getDisruptionPosts } = require("../services/redditService");
 const { mapDisruptionRedditPosts } = require("../utils/redditMapper");
 
-const DEFAULT_SUBREDDITS = [
-  "DisruptionTracker",
-  "LondonTube",
-  "LondonUnderground",
-  "uktrains",
-  "LondonOverground",
-  "TransportForLondon",
-];
-
 const DEFAULT_TIMES = ["all", "hour", "day", "week", "month", "year"];
 
 exports.getDisruptionPosts = async (req, res, next) => {
   try {
-    const { queryTerms, subreddits, time } = req.query;
+    const { queryTerms, time } = req.query;
+    const { lineName } = req.validatedQuery;
 
-    if (!queryTerms || !subreddits) {
+    if (!queryTerms) {
       return res.status(400).json({
-        error: "Query term and subreddits are required",
+        error: "Query terms are required",
       });
     }
 
@@ -30,28 +22,14 @@ exports.getDisruptionPosts = async (req, res, next) => {
       });
     }
 
-    const subredditArray = subreddits.split(",").map((sub) => sub.trim());
-
-    const invalidSubreddits = subredditArray.filter(
-      (sub) => !DEFAULT_SUBREDDITS.includes(sub)
-    );
-
-    if (invalidSubreddits.length > 0)
-      return res.status(400).json({
-        error: `Invalid subreddit(s): ${invalidSubreddits.join(
-          ", "
-        )}. Must be one of: ${DEFAULT_SUBREDDITS.join(", ")}`,
-      });
-
     const queryTermsArray = queryTerms.split(",").map((term) => term.trim());
 
     const posts = await getDisruptionPosts({
       queryTerms: queryTermsArray,
-      subreddits: subredditArray,
       time: time,
     });
 
-    const mappedPosts = mapDisruptionRedditPosts(posts, subredditArray);
+    const mappedPosts = mapDisruptionRedditPosts(posts, lineName);
     res.json({ result: mappedPosts });
   } catch (error) {
     next(error);

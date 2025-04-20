@@ -9,19 +9,27 @@ const redditClient = new snoowrap({
 });
 
 exports.getDisruptionPosts = async (params) => {
-  const { queryTerms, subreddits, time = "all" } = params;
+  const { queryTerms, time = "all" } = params;
 
-  const searchPromises = subreddits.map((subreddit) => {
-    for (const queryTerm of queryTerms) {
-      return redditClient.search({
+  let searchPromises = [];
+
+  searchPromises.push(
+    redditClient.getSubreddit("DisruptionTracker").getNew({
+      limit: 100,
+    })
+  );
+
+  for (const queryTerm of queryTerms) {
+    searchPromises.push(
+      redditClient.search({
         query: queryTerm,
-        subreddit: subreddit,
+        subreddit: "LondonUnderground",
         sort: "new",
         time: time,
-        limit: 10,
-      });
-    }
-  });
+        limit: 100,
+      })
+    );
+  }
 
   const posts = await Promise.all(searchPromises);
 
