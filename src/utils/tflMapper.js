@@ -54,6 +54,7 @@ const mapCommonNameShortenings = {
   " Tram Stop": "",
   " (London)": "",
   "London ": "",
+  " (Berks)": "",
   "'": "",
   "s's": "s",
 };
@@ -62,7 +63,7 @@ const mapSpecialCaseShortenings = {
   "Queens Rd Peckham": "Qns Rd Peckham",
   "Kings Cross St. Pancras": "Kings Cross St. Pan",
   "Battersea Power Station": "Battersea Pwr Stn",
-  "Heathrow Terminals 2 & 3": "Heathrow T2 & T3",
+  "Heathrow Terminals 2 & 3": "Heathrow T2 & 3",
   "Heathrow Terminal 4": "Heathrow T4",
   "Heathrow Terminal 5": "Heathrow T5",
   "High Street Kensington": "High St Ken",
