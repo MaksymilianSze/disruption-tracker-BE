@@ -1,6 +1,14 @@
 const { allowedVariationsMapper } = require("./allowedVariationsMapper");
 
-exports.mapDisruptionRedditPosts = (posts, lineName) => {
+const timeFilters = {
+  hour: 60 * 60 * 1000,
+  day: 24 * 60 * 60 * 1000,
+  week: 7 * 24 * 60 * 60 * 1000,
+  month: 30 * 24 * 60 * 60 * 1000,
+  year: 365 * 24 * 60 * 60 * 1000,
+};
+
+exports.mapDisruptionRedditPosts = (posts, lineName, time) => {
   const result = {
     posts: [],
   };
@@ -35,6 +43,18 @@ exports.mapDisruptionRedditPosts = (posts, lineName) => {
   result.posts.sort((a, b) => {
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
+
+  if (time && time !== "all") {
+    const now = new Date();
+
+    const timeLimit = timeFilters[time];
+    if (timeLimit) {
+      result.posts = result.posts.filter((post) => {
+        const postDate = new Date(post.createdAt);
+        return now - postDate <= timeLimit;
+      });
+    }
+  }
 
   if (lineName) {
     const allowedVariations = allowedVariationsMapper(lineName);

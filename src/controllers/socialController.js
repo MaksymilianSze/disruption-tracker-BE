@@ -29,7 +29,7 @@ exports.getDisruptionPosts = async (req, res, next) => {
       time: time,
     });
 
-    const mappedPosts = mapDisruptionRedditPosts(posts, lineName);
+    const mappedPosts = mapDisruptionRedditPosts(posts, lineName, time);
     res.json({ result: mappedPosts });
   } catch (error) {
     next(error);
