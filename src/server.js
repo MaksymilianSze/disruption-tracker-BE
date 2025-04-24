@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const http = require("http");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const session = require("express-session");
 
 dotenv.config();
 
@@ -28,6 +29,15 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 3600000 },
+  })
+);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Disruption Tracker API is running" });

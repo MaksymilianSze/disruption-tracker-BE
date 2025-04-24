@@ -55,8 +55,8 @@ const mapCommonNameShortenings = {
   " (London)": "",
   "London ": "",
   " (Berks)": "",
-  "'": "",
   "s's": "s",
+  "'": "",
 };
 
 const mapSpecialCaseShortenings = {

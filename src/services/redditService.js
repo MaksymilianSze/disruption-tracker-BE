@@ -35,5 +35,24 @@ exports.getDisruptionPosts = async (params) => {
 
   const flattenedPosts = posts.flat();
 
+  let commentPromises = [];
+
+  for (const post of flattenedPosts) {
+    commentPromises.push(post.expandReplies({ limit: 10 }));
+  }
+
+  const comments = await Promise.all(commentPromises);
+
+  for (let i = 0; i < flattenedPosts.length; i++) {
+    console.log(comments[i]);
+    flattenedPosts[i].comments = comments[i].comments || [];
+  }
+
   return flattenedPosts;
+};
+
+exports.createDisruptionPost = async (post) => {
+  const createdPost = await redditClient.submit(post.title, {
+    selftext: post.body,
+  });
 };

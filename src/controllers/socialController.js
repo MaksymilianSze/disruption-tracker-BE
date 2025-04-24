@@ -1,5 +1,6 @@
 const { getDisruptionPosts } = require("../services/redditService");
 const { mapDisruptionRedditPosts } = require("../utils/redditMapper");
+const snoowrap = require("snoowrap");
 
 const DEFAULT_TIMES = ["all", "hour", "day", "week", "month", "year"];
 
@@ -31,6 +32,41 @@ exports.getDisruptionPosts = async (req, res, next) => {
 
     const mappedPosts = mapDisruptionRedditPosts(posts, lineName, time);
     res.json({ result: mappedPosts });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.createDisruptionPost = async (req, res, next) => {
+  try {
+    const { title, body } = req.body;
+
+    const createdPost = await createDisruptionPost(post);
+
+    res.json({ result: createdPost });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.auth = async (req, res, next) => {
+  try {
+    const { code } = req.query;
+
+    const redditUserClient = await snoowrap.fromAuthCode({
+      code,
+      userAgent: "disruption-tracker/1.0 by TrainTrackerman",
+      clientId: process.env.USER_CLIENT_OAUTH_CLIENT_ID,
+      clientSecret: process.env.USER_CLIENT_OAUTH_CLIENT_SECRET,
+      redirectUri: "http://localhost:5000/api/auth/reddit/callback",
+    });
+
+    req.session.redditAuth = {
+      accessToken: redditUserClient.accessToken,
+      refreshToken: redditUserClient.refreshToken,
+    };
+
+    res.redirect("http://localhost:5173/");
   } catch (error) {
     next(error);
   }

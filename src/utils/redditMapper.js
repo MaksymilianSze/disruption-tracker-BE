@@ -29,6 +29,7 @@ exports.mapDisruptionRedditPosts = (posts, lineName, time) => {
     uniquePostKeys.add(uniqueKey);
 
     result.posts.push({
+      id: post.id,
       title: post.title,
       body: post.selftext,
       image: post.url,
@@ -37,6 +38,12 @@ exports.mapDisruptionRedditPosts = (posts, lineName, time) => {
       subreddit: post.subreddit?.display_name || post.subreddit,
       permalink: `https://reddit.com${post.permalink}`,
       flair: post.link_flair_text,
+      comments: post.comments.map((comment) => ({
+        id: comment.id,
+        body: comment.body,
+        author: comment.author?.name ?? "unknown",
+        createdAt: new Date(comment.created_utc * 1000).toISOString(),
+      })),
     });
   });
 
