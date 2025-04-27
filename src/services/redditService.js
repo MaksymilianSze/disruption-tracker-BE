@@ -44,15 +44,27 @@ exports.getDisruptionPosts = async (params) => {
   const comments = await Promise.all(commentPromises);
 
   for (let i = 0; i < flattenedPosts.length; i++) {
-    console.log(comments[i]);
     flattenedPosts[i].comments = comments[i].comments || [];
   }
 
   return flattenedPosts;
 };
 
-exports.createDisruptionPost = async (post) => {
-  const createdPost = await redditClient.submit(post.title, {
-    selftext: post.body,
+exports.createDisruptionPost = async (title, body, redditAuth) => {
+  const userRedditClient = new snoowrap({
+    userAgent: "disruption-tracker/1.0 by TrainTrackerman",
+    accessToken: redditAuth.accessToken,
+    refreshToken: redditAuth.refreshToken,
+    clientId: process.env.USER_CLIENT_OAUTH_CLIENT_ID,
+    clientSecret: process.env.USER_CLIENT_OAUTH_CLIENT_SECRET,
   });
+
+  const createdPost = await userRedditClient
+    .getSubreddit("DisruptionTracker")
+    .submitSelfpost({
+      title: title,
+      text: body,
+    });
+
+  return createdPost;
 };

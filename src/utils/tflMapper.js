@@ -66,7 +66,7 @@ const mapSpecialCaseShortenings = {
   "Heathrow Terminals 2 & 3": "Heathrow T2 & 3",
   "Heathrow Terminal 4": "Heathrow T4",
   "Heathrow Terminal 5": "Heathrow T5",
-  "High Street Kensington": "High St Ken",
+  "High St Kensington": "High St Ken",
   "Kensington (Olympia)": "Ken Olympia",
   "Walthamstow Central": "Walthamstow Cntrl",
 };

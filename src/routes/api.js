@@ -29,4 +29,8 @@ router.post("/social/posts", socialController.createDisruptionPost);
 
 router.get("/auth/reddit/callback", socialController.auth);
 
+router.get("/auth/status", socialController.checkAuthStatus);
+
+router.post("/auth/logout", socialController.logout);
+
 module.exports = router;

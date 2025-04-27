@@ -1,4 +1,7 @@
-const { getDisruptionPosts } = require("../services/redditService");
+const {
+  getDisruptionPosts,
+  createDisruptionPost,
+} = require("../services/redditService");
 const { mapDisruptionRedditPosts } = require("../utils/redditMapper");
 const snoowrap = require("snoowrap");
 
@@ -39,9 +42,17 @@ exports.getDisruptionPosts = async (req, res, next) => {
 
 exports.createDisruptionPost = async (req, res, next) => {
   try {
+    if (!req.session.redditAuth) {
+      return res.status(401).json({ error: "Not authenticated with Reddit" });
+    }
+
     const { title, body } = req.body;
 
-    const createdPost = await createDisruptionPost(post);
+    const createdPost = await createDisruptionPost(
+      title,
+      body,
+      req.session.redditAuth
+    );
 
     res.json({ result: createdPost });
   } catch (error) {
@@ -66,8 +77,33 @@ exports.auth = async (req, res, next) => {
       refreshToken: redditUserClient.refreshToken,
     };
 
-    res.redirect("http://localhost:5173/");
+    res.send(`
+      <html>
+        <body>
+          <script>
+            window.opener.postMessage({ type: 'REDDIT_AUTH_SUCCESS' }, 'http://localhost:5173');
+            window.close();
+          </script>
+          <p>Authentication successful. You can close this window.</p>
+        </body>
+      </html>
+    `);
   } catch (error) {
     next(error);
   }
+};
+
+exports.checkAuthStatus = async (req, res, next) => {
+  res.json({
+    authenticated: !!req.session.redditAuth,
+    user: req.session.redditAuth || null,
+  });
+};
+
+exports.logout = async (req, res, next) => {
+  req.session.destroy((err) => {
+    if (err) next(err);
+  });
+  res.clearCookie("connect.sid");
+  res.json({ success: true });
 };
