@@ -53,6 +53,7 @@ const mapCommonNameShortenings = {
   " (Waterloo & City)": "",
   " Tram Stop": "",
   " (London)": "",
+  " (Dist&Picc Line)": "",
   "London ": "",
   " (Berks)": "",
   "s's": "s",
