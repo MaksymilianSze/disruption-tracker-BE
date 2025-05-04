@@ -44,7 +44,7 @@ app.use(
   })
 );
 
-app.get("/", (req, res) => {
+app.get("/ping", (req, res) => {
   res.status(200).json({ message: "Disruption Tracker API is running" });
 });
 
