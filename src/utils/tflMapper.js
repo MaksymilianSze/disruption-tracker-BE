@@ -41,21 +41,8 @@ const mapCommonNameShortenings = {
   " Underground Station": "",
   "-Underground": "",
   " Rail Station": "",
-  " (Circle Line)": "",
-  " (H&C Line)": "",
-  " (DistrictLine)": "",
-  " (Bakerloo)": "",
-  " (Metropolitan)": "",
-  " (Central)": "",
-  " (Northern)": "",
-  " (Piccadilly)": "",
-  " (Victoria)": "",
-  " (Waterloo & City)": "",
   " Tram Stop": "",
-  " (London)": "",
-  " (Dist&Picc Line)": "",
   "London ": "",
-  " (Berks)": "",
   "s's": "s",
   "'": "",
 };
@@ -68,7 +55,7 @@ const mapSpecialCaseShortenings = {
   "Heathrow Terminal 4": "Heathrow T4",
   "Heathrow Terminal 5": "Heathrow T5",
   "High St Kensington": "High St Ken",
-  "Kensington (Olympia)": "Ken Olympia",
+  Kensington: "Ken Olympia",
   "Walthamstow Central": "Walthamstow Cntrl",
 };
 
@@ -76,6 +63,9 @@ const formatStationName = (stationName) => {
   if (!stationName) return "";
 
   let formattedName = stationName;
+
+  formattedName = formattedName.replace(/\s+\([^)]*\)/g, "");
+
   for (const [pattern, replacement] of Object.entries(
     mapCommonNameShortenings
   )) {
