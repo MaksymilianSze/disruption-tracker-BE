@@ -29,6 +29,16 @@ exports.mapLineStatusToDisruptions = (lineStatusData, lineName) => {
       affectedStations: (disruption.disruption?.affectedStops || []).map(
         (route) => formatStationName(route.commonName)
       ),
+      originatingStation: disruption.disruption?.affectedStops?.length
+        ? formatStationName(
+            disruption.disruption?.affectedRoutes[0]?.originationName
+          )
+        : null,
+      terminatingStation: disruption.disruption?.affectedStops?.length
+        ? formatStationName(
+            disruption.disruption?.affectedRoutes[0]?.destinationName
+          )
+        : null,
     });
   });
 

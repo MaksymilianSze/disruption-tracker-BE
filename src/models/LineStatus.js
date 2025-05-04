@@ -7,6 +7,8 @@ const disruptionSchema = new mongoose.Schema({
   disruptionEnd: Date,
   isEntireRouteAffected: Boolean,
   affectedStations: [String],
+  originatingStation: String || null,
+  terminatingStation: String || null,
   updatedAt: {
     type: Date,
     default: Date.now,

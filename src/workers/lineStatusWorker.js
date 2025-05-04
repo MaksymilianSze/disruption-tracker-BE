@@ -32,6 +32,10 @@ class LineStatusWorker {
         newDisruption.status !== existingDisruption.status ||
         newDisruption.isEntireRouteAffected !==
           existingDisruption.isEntireRouteAffected ||
+        newDisruption.originatingStation !==
+          existingDisruption.originatingStation ||
+        newDisruption.terminatingStation !==
+          existingDisruption.terminatingStation ||
         // JSON stringify because an array is never equal to another instance of an array even if they have the same values
         JSON.stringify(newDisruption.affectedStations.sort()) !==
           JSON.stringify(existingDisruption.affectedStations.sort())
