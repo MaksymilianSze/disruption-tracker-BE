@@ -3,6 +3,7 @@ const axios = require("axios");
 const TFL_BASE_URL = "https://api.tfl.gov.uk";
 const TFL_API_KEY = process.env.TFL_API_KEY;
 
+// Function to fetch statuses from the TFL API
 exports.getLineStatus = async (lineName) => {
   try {
     const response = await axios.get(

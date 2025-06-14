@@ -7,6 +7,7 @@ Prerequisites:
 First:
 
 1. Create a copy of `.env.example` and rename it to `.env`
+2. Generate a random secure secret and replace the placeholder inside SESSION_SECRET
 
 How to register for a TfL Unified API Application Key:
 
@@ -16,7 +17,7 @@ How to register for a TfL Unified API Application Key:
 How to get a Reddit API Keys:
 
 1. Sign up for a Reddit account at: https://www.reddit.com/login/
-2. Register a Web App & Personal Script at: https://old.reddit.com/prefs/apps
+2. Register a Web App & Personal at: https://old.reddit.com/prefs/apps
 3. Register to use the Reddit API: https://support.reddithelp.com/hc/en-us/requests/new?ticket_form_id=14868593862164
 4. Edit the callback URI on your app https://old.reddit.com/prefs/apps to be `http://localhost:5000/auth/reddit/callback` or whatever the port or URI you decide to run it on
 5. Use the values obtained from the Personal Script and your Reddit Account to replace in the placeholder values in OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, REDDIT_USERNAME, and REDDIT_PASSWORD

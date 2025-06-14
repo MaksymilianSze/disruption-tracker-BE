@@ -18,6 +18,7 @@ const isApiOnlyMode = process.env.NODE_ENV === "api-only";
 
 const app = express();
 app.use(helmet());
+//Setup up basic rate limiting to prevent abuse
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -30,11 +31,12 @@ const PORT = process.env.PORT || 5000;
 app.use(
   cors({
     credentials: true,
-    origin: ["http://localhost:5173", "http://localhost:4173"],
+    origin: ["http://localhost:5173", "http://localhost:4173"], // Caontins the URLs for the dev and preview servers
   })
 );
 app.use(express.json());
 
+// Sets up sessions based authentication for Reddit posts
 app.use(
   session({
     secret: process.env.SESSION_SECRET,

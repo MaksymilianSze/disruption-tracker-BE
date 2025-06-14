@@ -43,6 +43,7 @@ const setupSocket = async (server) => {
 
     try {
       console.log("Setting up filtered change stream...");
+      // Change stream is initialised here and callback function is passed in to emit events out to clients
       changeStream = lineStatusService.watchLineStatusChanges(
         async (change) => {
           console.log(

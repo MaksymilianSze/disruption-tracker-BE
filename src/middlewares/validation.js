@@ -29,6 +29,7 @@ const lineNameSchema = Joi.object({
     .lowercase(),
 }).unknown(true);
 
+// Validates the query parameters for the API to prevent misuse, important here as it is used in DB queries
 const validateQuery = (schema) => {
   return (req, res, next) => {
     // Only alowed to use one lineName at a time

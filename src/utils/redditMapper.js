@@ -20,6 +20,7 @@ exports.mapDisruptionRedditPosts = (posts, lineName, time) => {
   const uniquePostKeys = new Set();
 
   posts.forEach((post) => {
+    // For deduplication of posts
     const uniqueKey = `${post.created_utc}_${post.title.substring(0, 30)}`;
 
     if (uniquePostKeys.has(uniqueKey)) {
@@ -47,6 +48,7 @@ exports.mapDisruptionRedditPosts = (posts, lineName, time) => {
     });
   });
 
+  // Needs to be sorted again by date as the combination of results and deduplication may have changed the order
   result.posts.sort((a, b) => {
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
@@ -63,6 +65,7 @@ exports.mapDisruptionRedditPosts = (posts, lineName, time) => {
     }
   }
 
+  // Filter the posts to only include the ones that are about the lineName
   if (lineName) {
     const allowedVariations = allowedVariationsMapper(lineName);
     if (allowedVariations) {

@@ -8,17 +8,20 @@ const redditClient = new snoowrap({
   password: process.env.REDDIT_PASSWORD,
 });
 
+// Function to fetch disruption posts from Reddit
 exports.getDisruptionPosts = async (params) => {
   const { queryTerms, time = "all" } = params;
 
   let searchPromises = [];
 
+  // No query terms as it is implied that the posts are about disruptions
   searchPromises.push(
     redditClient.getSubreddit("DisruptionTracker").getNew({
       limit: 100,
     })
   );
 
+  // Query terms can't be OR'd together so we need to search for each term separately then deduplicate later
   for (const queryTerm of queryTerms) {
     searchPromises.push(
       redditClient.search({
@@ -37,6 +40,7 @@ exports.getDisruptionPosts = async (params) => {
 
   let commentPromises = [];
 
+  // Get the comments for each post
   for (const post of flattenedPosts) {
     commentPromises.push(post.expandReplies({ limit: 10 }));
   }

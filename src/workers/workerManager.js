@@ -1,5 +1,6 @@
 const LineStatusWorker = require("./lineStatusWorker");
 
+// Defines the workers for the tube lines and manages their start and stop
 class WorkerManager {
   constructor() {
     this.workers = {};

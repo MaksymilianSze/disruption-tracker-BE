@@ -13,12 +13,14 @@ exports.mapLineStatusToDisruptions = (lineStatusData, lineName) => {
     disruptions: [],
   };
 
+  // If there are no disruptions, there must be a good service
   if (
     disruptionData.lineStatuses[0].statusSeverityDescription === "Good Service"
   ) {
     return result;
   }
 
+  // Format the data to be more readable and easier to understand for the frontend
   disruptionData.lineStatuses.forEach((disruption) => {
     result.disruptions.push({
       status: disruption.statusSeverityDescription,
@@ -74,6 +76,7 @@ const formatStationName = (stationName) => {
 
   let formattedName = stationName;
 
+  // Remove any brackets and their contents
   formattedName = formattedName.replace(/\s+\([^)]*\)/g, "");
 
   for (const [pattern, replacement] of Object.entries(
@@ -82,6 +85,7 @@ const formatStationName = (stationName) => {
     formattedName = formattedName.replace(pattern, replacement);
   }
 
+  // Remove any extra spaces
   formattedName = formattedName.replace(/\s+/g, " ").trim();
 
   for (const [original, shortened] of Object.entries(

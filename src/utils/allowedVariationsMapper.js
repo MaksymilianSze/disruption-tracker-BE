@@ -77,6 +77,7 @@ const overgroundVariations = [
   "windrush line",
 ];
 
+// Best effort attempt to create a mapping of line names to their common variations for filtering Reddit posts
 exports.allowedVariationsMapper = (lineName) => {
   const lineNameLower = lineName.toLowerCase();
 

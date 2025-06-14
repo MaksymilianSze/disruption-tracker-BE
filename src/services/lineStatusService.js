@@ -24,6 +24,7 @@ exports.getAllLineStatuses = async () => {
 
 exports.watchLineStatusChanges = (callback) => {
   try {
+    // Defines that change streams should trigger on insert and update operations
     const pipeline = [
       {
         $match: {
@@ -38,12 +39,14 @@ exports.watchLineStatusChanges = (callback) => {
       },
     ];
 
+    // So it returns the full document on update
     const options = {
       fullDocument: "updateLookup",
     };
 
     const changeStream = LineStatus.watch(pipeline, options);
 
+    // Defines the logic for what to do when a change is detected
     changeStream.on("change", (change) => {
       console.log("Change detected matching criteria:", change.operationType);
       console.log("Full document included:", !!change.fullDocument);
@@ -62,6 +65,7 @@ exports.watchLineStatusChanges = (callback) => {
       ) {
         console.log("fullDocument missing, fetching document by ID");
 
+        // Just in case the full document is not returned it is fetched from the DB
         LineStatus.findById(change.documentKey._id)
           .then((doc) => {
             if (doc) {
@@ -83,6 +87,7 @@ exports.watchLineStatusChanges = (callback) => {
             callback(change);
           });
       } else {
+        // Use the callback function with the change passed in, in this case it will be the socket function
         callback(change);
       }
     });
