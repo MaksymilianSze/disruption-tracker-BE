@@ -1,10 +1,72 @@
-Prerequisites:
+Installing Node.js:
+Windows:
 
-- Node.js v23.9.0
-- NPM v10.9.2
-- MongoDB running on `mongodb://localhost:27017/disruption-tracker` with a replica set setup, or whatever URI you choose with the `.env` file changed
+1. Open your browser and go to https://nodejs.org/en/download and select version v23.11.1 and download the Windows Installer (.msi)
+2. Go to your downloads folder and use the installer, ensure "Add to PATH" is checked
+3. To verify that the install worked open command prompt and run `node -v`, the output should be v23.11.1
 
-First:
+macOS & Linux:
+
+1. Open a terminal and run `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh`
+2. Restart your terminal
+3. Run `nvm install v23.11.1`
+4. To verify that the install worked run `node -v` in your shell, the output should be v23.11.1
+
+Setting up MongoDB:
+Windows:
+
+1. Open your browser and go to https://www.mongodb.com/try/download/community and download the Windows Installer (.msi) for the latest version
+2. Run the installer and enable MongoDB and choose "complete" and then "Install MongoD as a Service"
+3. Now go to https://www.mongodb.com/try/download/community and download the Windows Installer (.msi) for the latest version
+4. Run the installer
+5. If not already present, add mongosh to your system PATH: Start -> "Environment Variables" -> Edit system variables -> Path -> Add -> Paste path "C:\Users\[{user}\AppData\Local\Programs\mongosh\" where {user} is your windows user
+6. Verify the install worked by running `mongosh` in command prompt and checking if the command is recognised
+7. Open file explorer and go to `C:\Program Files\MongoDB\Server\x.x\bin\` where "x.x" is the version you installed
+8. Open the `mongod.cfg` file with notepad and add or edit the replication to be as follows:
+   replication:
+   replSetName: "rs0"
+9. Ensure the net configuration looks like the following, if not change it:
+   net:
+   port: 27017
+   bindIp: 127.0.0.1
+10. Open command prompt and run `net stop MongoDB` then `net start MongoDB`
+11. Then run `mongosh` then `rs.initiate()`
+
+macOS:
+
+1. Install Homebrew (if not already installed), open a terminal and run `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+2. Follow the on screen instructions then run `echo 'eval "$(/opt/homebrew/bin/brew shellenv)"'` and `eval "$(/opt/homebrew/bin/brew shellenv)"` to verify the install
+3. Run `brew tap mongodb/brew` and `brew install mongodb-community@8.0`
+4. Run `sudo nano /opt/homebrew/etc/mongod.conf` and update replication to be as follows:
+   replication:
+   replSetName: "rs0"
+5. Ensure the net configuration is as follows:
+   net:
+   port: 27017
+   bindIp: 127.0.0.1
+6. Run `brew services start mongodb-community@8.0`
+7. Run `mongosh` then `rs.initiate()`
+
+Linux:
+
+1. Open a bash terminal and run `sudo apt update` and `sudo apt install -y mongodb`
+2. Run `sudo nano /etc/mongod.conf` and modify the replication to be as follows:
+   replication:
+   replSetName: "rs0"
+3. Ensure the net configuration is as follows:
+   net:
+   port: 27017
+   bindIp: 127.0.0.1
+4. Run `sudo service mongod stop` then `sudo service mongod start`
+5. Run `mongosh` then `rs.initiate()`
+
+Setting up the Back-End: 0. Important note for markers, you must use the source files found in the Moodle submission rather than from GitHub otherwise secret key values will be missing from the environment file
+
+1. Navigate inside "disruption-tracker-BE" and open a terminal in this location, or command prompt for Windows
+2. Run `npm install`
+3. Run `npm run dev` to start the server
+
+---OPTIONAL SETUP BELOW IF YOU WISH TO OBTAIN AND USE YOUR OWN API KEYS---
 
 1. Create a copy of `.env.example` and rename it to `.env`
 2. Generate a random secure secret and replace the placeholder inside SESSION_SECRET
