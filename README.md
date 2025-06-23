@@ -1,4 +1,5 @@
 Installing Node.js:
+
 Windows:
 
 1. Open your browser and go to https://nodejs.org/en/download and select version v23.11.1 and download the Windows Installer (.msi)
@@ -60,11 +61,12 @@ Linux:
 4. Run `sudo service mongod stop` then `sudo service mongod start`
 5. Run `mongosh` then `rs.initiate()`
 
-Setting up the Back-End: 0. Important note for markers, you must use the source files found in the Moodle submission rather than from GitHub otherwise secret key values will be missing from the environment file
+Setting up the Back-End:
 
-1. Navigate inside "disruption-tracker-BE" and open a terminal in this location, or command prompt for Windows
-2. Run `npm install`
-3. Run `npm run dev` to start the server
+1. Important note for markers, you must use the source files found in the Moodle submission rather than from GitHub otherwise secret key values will be missing from the environment file
+2. Navigate inside "disruption-tracker-BE" and open a terminal in this location, or command prompt for Windows
+3. Run `npm install`
+4. Run `npm run dev` to start the server
 
 ---OPTIONAL SETUP BELOW IF YOU WISH TO OBTAIN AND USE YOUR OWN API KEYS---
 
